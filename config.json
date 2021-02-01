@@ -1,0 +1,14 @@
+{
+    "database_name":"kursovoi_project",
+    "database_host":"176.118.165.209",
+    "database_port":"6432",
+    "database_username":"misha",
+    "database_password":"misha",
+    "default_protocol":"272",
+    "default_specialty":"09.02.03",
+    "default_course":"4",
+    "default_semester":"8",
+    "default_students_count":"20",
+    "default_zam_umr":"В. В. Ладынина",
+    "default_cicl_comission":"Т. В. Доррер"
+}
