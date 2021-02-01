@@ -42,6 +42,12 @@ def config_set(parameter, value, path: str = CONFIG_PATH):
     return config[parameter] if parameter in config else None
 
 
+def md5(string):
+    from hashlib import md5 as _md5
+
+    return _md5(string.encode("utf-8")).hexdigest()
+
+
 class _AutoInit:
     def __init__(self, **kwargs) -> None:
         for key, value in list(kwargs.items()):

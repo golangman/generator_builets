@@ -97,7 +97,7 @@ def draw(
     for subject_idx in subject_len_range:
         subject = subjects[subject_idx]
 
-        width, height = draw.textsize(subject + ", ", font=font)
+        width, height = draw.textsize(subject + ",  ", font=font)
 
         if (line_width + width) > line_width_max:
             temp_subject = ""
@@ -127,11 +127,11 @@ def draw(
 
                 draw.text(
                     (start_x + line_width, start_y),
-                    temp_subject + (", " if subject_idx != last_subject_idx else ""),
+                    temp_subject + (",  " if subject_idx != last_subject_idx else ""),
                     fill="black",
                     font=font_bold,
                 )
-                temp_subject_width, _ = draw.textsize(temp_subject + ", ", font=font)
+                temp_subject_width, _ = draw.textsize(temp_subject + ",  ", font=font)
 
                 line_width += temp_subject_width
 
@@ -141,7 +141,7 @@ def draw(
 
         draw.text(
             (start_x + line_width, start_y),
-            subject + (", " if subject_idx != last_subject_idx else ""),
+            subject + (",  " if subject_idx != last_subject_idx else ""),
             fill="black",
             font=font_bold,
         )
@@ -218,7 +218,7 @@ if __name__ == "__main__":
         "В. В. Ладынина",
         "Т. В. Доррер",
         ["Галич", "Путен"],
-        ["Программирование", "История",],
+        ["История", "Программирование"],
         [
             "Возникновение и развитие Древнерусского государства (IX – начало ХII в.)",
             "Экономическое и социально-политическое развитие России в начале ХХ в",
@@ -227,4 +227,5 @@ if __name__ == "__main__":
             "Культура Древней Руси (Х–ХIII вв.). Значение принятия христианства",
         ],
     )
-    generate_a4(builet, None)
+    builet.show()
+    # generate_a4(builet, None)

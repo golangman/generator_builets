@@ -24,12 +24,15 @@ _name, _host, _port, _user, _password = config_get_params(
 
 driver = PostgresqlDatabase
 
-database = driver(_name, host=_host, port=_port, user=_user, password=_password,)
+database = driver(
+    _name, host=_host, port=_port, user=_user, password=_password, autorollback=True
+)
 
 # * Базовая модель моделей базы данных для наследования драйвера
 class BaseModel(Model):
     class Meta:
         database = database
+        autorollback = True
 
 
 # * Модель пользователей

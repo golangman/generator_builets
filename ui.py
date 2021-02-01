@@ -3,7 +3,7 @@ from tkinter.constants import GROOVE
 from tkinter.ttk import Combobox
 
 from tkinter.simpledialog import askstring
-from utils import config_read
+from utils import config_read, md5
 from random import SystemRandom
 from collections import Counter
 from os import mkdir
@@ -16,7 +16,7 @@ class Window:
     def __init__(self, root, database_manager) -> None:
         self.root = root
         self.root.title("Авторизация")
-        self.root.geometry("255x135+0+0")
+        self.root.geometry("255x175+0+0")
         self.database_manager = database_manager
 
     def main_page_init(self):
@@ -205,6 +205,7 @@ class Window:
             SystemRandom().shuffle(self.subjects)
 
             if not self.is_manually_difficulty:
+                self.button_create.destroy()
                 self.comboboxs_difficulty = []
                 questions_count_range = range(self.questions_count)
                 difficulties = [
@@ -297,18 +298,40 @@ class Window:
         # *Sing in button
         Button(
             self.Frame,
-            command=self.auth,
-            text="Login",
+            command=self.sign_in,
+            text="Sign In",
             width=15,
             font=("times new roman", 15, "bold"),
             bg="yellow",
             fg="red",
         ).grid(row=3, column=1, pady=10)
 
-    def auth(self):
+        # *Sing up button
+        Button(
+            self.Frame,
+            command=self.sign_up,
+            text="Sign Up",
+            width=15,
+            font=("times new roman", 15, "bold"),
+            bg="yellow",
+            fg="red",
+        ).grid(row=4, column=1, pady=10)
+
+    def sign_up(self):
         login, password = self.username.get(), self.password.get()
 
-        is_sign_in = self.database_manager.sign_in(login, password)
+        result = self.database_manager.sign_up(login, md5(password))
+        
+        if not result:
+            messagebox.showerror("Регистрация", "Ошибка регистрации!", icon="warning")
+            return
+
+        messagebox.showinfo("Регистрация", "Пользователь успешно зарегистрирован!")
+
+    def sign_in(self):
+        login, password = self.username.get(), self.password.get()
+        
+        is_sign_in = self.database_manager.sign_in(login, md5(password))
 
         if is_sign_in:
             # * Очистка фрейма, мусорных атрибутов
@@ -357,12 +380,16 @@ class Window:
         )
 
         specialty = self.get_string(
-            "Введите номер специальность", 440, initialvalue=specialty
+            "Введите номер специальности", 440, initialvalue=specialty
         )
 
-        course = self.get_string("Введите номер курса", 220, initialvalue=course)
+        course = self.get_string(
+            "Введите номер курса", 220, initialvalue=course, _get_int=True
+        )
 
-        semester = self.get_string("Введите номер семестра", 250, initialvalue=semester)
+        semester = self.get_string(
+            "Введите номер семестра", 250, initialvalue=semester, _get_int=True
+        )
 
         zam_umr = self.get_string(
             "Введите краткое ФИО заместителя директора по УМР",
@@ -447,7 +474,7 @@ class Window:
 
         date = datetime.now()
 
-        dirname = f"./results/{students_count} билетов {date.hour}:{date.minute}:{date.second}"
+        dirname = f"./results/{students_count} билетов {date.day}.{date.month}.{date.year} {date.hour}:{date.minute}:{date.second}"
         mkdir(dirname)
         students_count_range = range(students_count)
         for task_idx in students_count_range:
@@ -492,7 +519,9 @@ class Window:
         subprocess.Popen(["open", dirname])
         exit()
 
-    def get_string(self, message, width, initialvalue):
+    def get_string(
+        self, message: str, width: int, initialvalue: str, _get_int: bool = False
+    ):
         def check_width(string, width):
             from PIL import ImageFont, ImageDraw, Image
 
@@ -505,8 +534,13 @@ class Window:
 
         def get(message):
             result = askstring(None, message, initialvalue=initialvalue)
+            
+            if not result or not (type(result) is str):
+                messagebox.showwarning(None, "Не оставляй поле пустым!")
+                return get(message)
 
-            if not result:
+            if _get_int and not result.isdigit():
+                messagebox.showwarning(None, "Введите число!")
                 return get(message)
 
             return result
