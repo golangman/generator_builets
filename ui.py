@@ -205,6 +205,22 @@ class Window:
             SystemRandom().shuffle(self.subjects)
 
             if not self.is_manually_difficulty:
+                self.comboboxs_difficulty = []
+                questions_count_range = range(self.questions_count)
+                difficulties = [
+                    _.complexity for _ in self.database_manager.get_all_difficulties()
+                ]
+                for _ in questions_count_range:
+                    combobox_difficulty = Combobox(
+                        self.FrameButtons,
+                        values=difficulties,
+                        state="readonly",
+                        width=10,
+                    )
+                    combobox_difficulty.current(
+                        SystemRandom().randint(0, len(difficulties) - 1)
+                    )
+                    self.comboboxs_difficulty.append((None, combobox_difficulty,))
                 self.generate_bilets()
                 return  # FIXME: вызов генератора
 
@@ -474,6 +490,7 @@ class Window:
         from subprocess import Popen
 
         subprocess.Popen(["open", dirname])
+        exit()
 
     def get_string(self, message, width, initialvalue):
         def check_width(string, width):
